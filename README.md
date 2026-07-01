@@ -1,0 +1,1 @@
+# py-rust-gdextension-cookiecutter
