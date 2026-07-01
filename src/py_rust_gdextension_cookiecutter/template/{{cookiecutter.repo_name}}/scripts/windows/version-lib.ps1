@@ -1,4 +1,4 @@
-# Sync VERSION into Cargo.toml and docs/description.md.
+# Sync VERSION into Cargo.toml, Cargo.lock, and docs/description.md.
 $ErrorActionPreference = "Stop"
 
 function Get-RepoRoot {
@@ -24,6 +24,31 @@ function Read-ProjectVersion {
     return $version
 }
 
+function Update-LockfileVersions {
+    param(
+        [string]$LockPath,
+        [string]$Version
+    )
+
+    $packageNames = @(
+        "{{ cookiecutter.project_slug }}",
+        "{{ cookiecutter.gd_crate_name }}",
+        "{{ cookiecutter.project_slug }}_cli"{% if cookiecutter.include_bevy_demo == "yes" %},
+        "{{ cookiecutter.project_slug }}_visualizer"{% endif %}
+    )
+    $lines = Get-Content $LockPath
+    $updateNext = $false
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -match '^name = "([^"]+)"$' -and $packageNames -contains $Matches[1]) {
+            $updateNext = $true
+        } elseif ($updateNext -and $lines[$i] -match '^version = "') {
+            $lines[$i] = "version = `"$Version`""
+            $updateNext = $false
+        }
+    }
+    Set-Content -Path $LockPath -Value $lines
+}
+
 function Sync-ProjectVersion {
     param([string]$Root)
 
@@ -36,7 +61,7 @@ function Sync-ProjectVersion {
     }
 
     $cargoText = Get-Content -Raw $cargoToml
-    $cargoPattern = '(\[workspace\.package\][\s\S]*?^version = ")[^"]+(")'
+    $cargoPattern = '(?ms)(\[workspace\.package\][\s\S]*?^version = ")[^"]+(")'
     if ($cargoText -notmatch $cargoPattern) {
         throw "Could not find [workspace.package] version in Cargo.toml"
     }
@@ -50,6 +75,11 @@ function Sync-ProjectVersion {
             $docText = [regex]::Replace($docText, $docPattern, "`${1}$version`${2}", 1)
             Set-Content -NoNewline -Path $descriptionMd -Value $docText
         }
+    }
+
+    $cargoLock = Join-Path $Root "Cargo.lock"
+    if (Test-Path $cargoLock) {
+        Update-LockfileVersions -LockPath $cargoLock -Version $version
     }
 
     return $version
@@ -80,6 +110,19 @@ function Test-ProjectVersionSync {
             if ($docVersion -ne $version) {
                 throw "VERSION ($version) does not match docs/description.md example ($docVersion). Run scripts\windows\sync-version.cmd"
             }
+        }
+    }
+
+    $cargoLock = Join-Path $Root "Cargo.lock"
+    if (Test-Path $cargoLock) {
+        $lockText = Get-Content -Raw $cargoLock
+        if ($lockText -match '(?ms)^name = "{{ cookiecutter.project_slug }}"\r?\nversion = "([^"]+)"') {
+            $lockVersion = $Matches[1]
+            if ($lockVersion -ne $version) {
+                throw "VERSION ($version) does not match Cargo.lock {{ cookiecutter.project_slug }} version ($lockVersion). Run scripts\windows\sync-version.cmd"
+            }
+        } else {
+            throw "Could not find {{ cookiecutter.project_slug }} version in Cargo.lock"
         }
     }
 }
@@ -141,8 +184,7 @@ function Invoke-VersionBump {
     $newVersion = "$major.$minor.$patch"
     $tag = "v$newVersion"
 
-    git rev-parse "refs/tags/$tag" 2>$null | Out-Null
-    if ($LASTEXITCODE -eq 0) {
+    if (git tag -l $tag) {
         throw "Tag already exists: $tag"
     }
 
@@ -155,7 +197,7 @@ function Invoke-VersionBump {
     Write-Host "Bumped version: $current -> $newVersion"
 
     if (-not $NoCommit) {
-        git add VERSION Cargo.toml docs/description.md
+        git add VERSION Cargo.toml Cargo.lock docs/description.md
         $staged = git diff --cached --name-only
         if ($staged) {
             git commit -m "Bump version to $newVersion"

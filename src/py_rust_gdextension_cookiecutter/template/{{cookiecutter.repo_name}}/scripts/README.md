@@ -43,8 +43,9 @@ PowerShell equivalents:
 
 `VERSION` at the repository root is the single source of truth. Workspace crates inherit
 `version.workspace = true` from `[workspace.package]` in root `Cargo.toml`. Cargo cannot read
-`VERSION` directly; run `sync-version` after editing `VERSION` by hand, or use `bump-version`
-before a release (syncs files, commits, and creates `vX.Y.Z`).
+`VERSION` directly; run `sync-version` after editing `VERSION` by hand (updates `Cargo.toml`,
+`Cargo.lock`, and `docs/description.md`), or use `bump-version` before a release (syncs
+files, commits, and creates `vX.Y.Z`).
 
 ## CI
 
