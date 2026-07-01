@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to **{{ cookiecutter.project_name_display }}**.
+Thank you for your interest in contributing to **py-rust-gdextension-cookiecutter**.
 
 ## How to contribute
 
@@ -11,9 +11,9 @@ This project uses a **fork and pull request** workflow. Outside contributors do 
 3. **Make your changes** and add or update tests where appropriate.
 4. **Run checks locally** before opening a PR:
    ```bash
-   ./scripts/linux/ci-check.sh
+   pip install -e ".[dev]"
+   invoke ci
    ```
-   On Windows: `scripts\windows\ci-check.cmd`
 5. **Open a pull request** against `main` on the upstream repository.
 6. Wait for **CI to pass** and for a **maintainer review**. A maintainer will merge approved changes.
 
@@ -22,7 +22,7 @@ This project uses a **fork and pull request** workflow. Outside contributors do 
 - Keep pull requests focused on a single change or feature.
 - Use a clear title and description. The PR template prompts for the important details.
 - Link related issues when applicable (`Fixes #123`).
-- Update documentation in `docs/` when you change public APIs.
+- Update documentation and cookiecutter template files when you change generator behavior.
 - Respond to review feedback and resolve conversation threads.
 
 ## Branch protection
@@ -31,17 +31,9 @@ The `main` branch is protected:
 
 - All changes must go through a pull request.
 - At least one approving review from a code owner is required.
-- The `build` CI check must pass on the latest commit.
-- Only the repository owner (@{{ cookiecutter.github_username }}) can merge pull requests.
+- The `ci` CI check must pass on the latest commit.
+- Only the repository owner (@jonfitt) can merge pull requests.
 - Merge commits are not allowed on `main`; approved PRs are squash-merged.
-
-After creating the repository on GitHub and adding `origin`, apply branch protection:
-
-```bash
-./scripts/linux/setup-branch-protection.sh
-```
-
-Replace `@{{ cookiecutter.github_username }}` in [`.github/CODEOWNERS`](./.github/CODEOWNERS) if you did not set `github_username` when generating the project.
 
 ## Reporting security issues
 
@@ -49,4 +41,4 @@ Do **not** open a public issue for security vulnerabilities. See [SECURITY.md](.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as the project.
+By contributing, you agree that your contributions will be licensed under the same license as the project ([LICENSE](./LICENSE)).
