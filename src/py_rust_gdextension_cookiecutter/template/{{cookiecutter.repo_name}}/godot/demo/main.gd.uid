@@ -1,0 +1,1 @@
+uid://{{ cookiecutter.project_slug | replace('_', '') }}main01

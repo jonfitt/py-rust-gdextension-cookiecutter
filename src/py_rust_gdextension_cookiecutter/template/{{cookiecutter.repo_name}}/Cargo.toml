@@ -1,0 +1,43 @@
+[workspace]
+members = [
+    ".",
+    "examples/{{ cookiecutter.project_slug }}_cli",
+    "extensions/{{ cookiecutter.gd_crate_name }}",
+{% if cookiecutter.include_bevy_demo == "yes" %}
+    "examples/{{ cookiecutter.project_slug }}_visualizer",
+{% endif %}
+]
+default-members = [".", "extensions/{{ cookiecutter.gd_crate_name }}"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+{% if cookiecutter.has_remote_license == "yes" %}
+license-file = "{{ cookiecutter.license_file }}"
+{% endif %}
+
+# Workspace layout:
+# - {{ cookiecutter.project_slug }} (root): core library
+# - examples/{{ cookiecutter.project_slug }}_cli: native CLI demo
+{% if cookiecutter.include_bevy_demo == "yes" %}
+# - examples/{{ cookiecutter.project_slug }}_visualizer: Bevy visualizer
+{% endif %}
+# - extensions/{{ cookiecutter.gd_crate_name }}: Godot 4 GDExtension (cdylib)
+
+[package]
+name = "{{ cookiecutter.project_slug }}"
+version.workspace = true
+edition = "2024"
+description = "{{ cookiecutter.description }}"
+{% if cookiecutter.author %}
+authors = ["{{ cookiecutter.author }}{% if cookiecutter.email %} <{{ cookiecutter.email }}>{% endif %}"]
+{% endif %}
+{% if cookiecutter.has_remote_license == "yes" %}
+license.workspace = true
+license-file = "{{ cookiecutter.license_file }}"
+{% endif %}
+
+[dependencies]
+thiserror = "2"
+
+[dev-dependencies]
