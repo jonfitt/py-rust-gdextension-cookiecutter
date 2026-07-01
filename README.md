@@ -4,6 +4,16 @@ Generate Rust GDExtension workspaces for Godot 4 by cloning a git remote and sca
 
 ## Install
 
+The easiest way to run the generator is to download the `.whl` from a [GitHub Release](https://github.com/jonfitt/py-rust-gdextension-cookiecutter/releases) and invoke it with `uvx` — no virtualenv and no install step:
+
+```bash
+uvx --from py_rust_gdextension_cookiecutter-0.1.0-py3-none-any.whl py-rust-gd
+```
+
+Replace the wheel filename with the version you downloaded.
+
+Alternatively, install with pip:
+
 ```bash
 pip install py-rust-gdextension-cookiecutter
 ```

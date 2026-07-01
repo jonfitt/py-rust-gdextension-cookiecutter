@@ -5,8 +5,7 @@ edition = "2024"
 publish = false
 description = "Bevy visualizer for {{ cookiecutter.project_slug }}"
 {% if cookiecutter.has_remote_license == "yes" %}
-license.workspace = true
-license-file = "../../{{ cookiecutter.license_file }}"
+license-file.workspace = true
 {% endif %}
 
 [[bin]]

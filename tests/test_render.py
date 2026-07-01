@@ -91,8 +91,9 @@ def test_render_with_remote_license(tmp_path: Path, base_options: ProjectOptions
 
     cargo_toml = (destination / "Cargo.toml").read_text(encoding="utf-8")
     assert 'license-file = "LICENSE.md"' in cargo_toml
-    assert "license.workspace = true" in cargo_toml
+    assert "license-file.workspace = true" in cargo_toml
+    assert "license.workspace = true" not in cargo_toml
 
     gd_cargo = (destination / "extensions/demo_lib_gd/Cargo.toml").read_text(encoding="utf-8")
-    assert 'license-file = "../../LICENSE.md"' in gd_cargo
+    assert "license-file.workspace = true" in gd_cargo
     assert "version.workspace = true" in gd_cargo
