@@ -6,8 +6,8 @@ set -euo pipefail
 read_lockfile_version() {
   local lockfile="${1:?}"
   perl -ne '
-    if (/^name = "{{ cookiecutter.project_slug }}"$/) { $want = 1 }
-    elsif ($want && /^version = "([^"]+)"/) { print $1; exit }
+    if (/^name = "{{ cookiecutter.project_slug }}"\r?$/) { $want = 1 }
+    elsif ($want && /^version = "([^"]+)"\r?$/) { print $1; exit }
   ' "${lockfile}"
 }
 
@@ -15,7 +15,7 @@ sync_lockfile_versions() {
   local lockfile="${1:?}"
   local version="${2:?}"
   perl -i -pe '
-    if (/^name = "(?:{{ cookiecutter.project_slug }}|{{ cookiecutter.gd_crate_name }}|{{ cookiecutter.project_slug }}_cli{% if cookiecutter.include_bevy_demo == "yes" %}|{{ cookiecutter.project_slug }}_visualizer{% endif %})"$/) { $want = 1 }
+    if (/^name = "(?:{{ cookiecutter.project_slug }}|{{ cookiecutter.gd_crate_name }}|{{ cookiecutter.project_slug }}_cli{% if cookiecutter.include_bevy_demo == "yes" %}|{{ cookiecutter.project_slug }}_visualizer{% endif %})"\r?$/) { $want = 1 }
     elsif ($want && /^version = "/) {
       s/^version = "[^"]+"/version = "'"${version}"'"/;
       $want = 0;
