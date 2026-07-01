@@ -1,0 +1,17 @@
+[package]
+name = "{{ cookiecutter.gd_crate_name }}"
+version.workspace = true
+edition = "2024"
+publish = false
+description = "Godot 4 GDExtension bindings for {{ cookiecutter.project_slug }}"
+{% if cookiecutter.has_remote_license == "yes" %}
+license.workspace = true
+license-file = "../../{{ cookiecutter.license_file }}"
+{% endif %}
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+{{ cookiecutter.project_slug }} = { path = "../.." }
+godot = { version = "{{ cookiecutter.godot_crate_version }}", features = ["register-docs"] }

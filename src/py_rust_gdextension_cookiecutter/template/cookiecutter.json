@@ -1,0 +1,21 @@
+{
+  "repo_name": "my_project",
+  "project_slug": "my_project",
+  "project_name_display": "My Project",
+  "description": "A Rust library with Godot 4 GDExtension bindings",
+  "author": "",
+  "email": "",
+  "godot_compatibility_minimum": "4.3",
+  "godot_crate_version": "0.5.4",
+  "include_bevy_demo": "no",
+  "has_remote_license": "no",
+  "license_file": "",
+  "gd_crate_name": "my_project_gd",
+  "gd_library_base": "my_project_gd",
+  "year": "2026",
+  "_copy_without_render": [
+    "*.png",
+    "*.jpg",
+    "*.ico"
+  ]
+}

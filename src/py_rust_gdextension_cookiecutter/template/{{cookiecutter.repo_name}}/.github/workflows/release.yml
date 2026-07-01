@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  verify-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Verify tag commit is on main
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+            echo "Tag commit ${GITHUB_SHA} is not on main"
+            exit 1
+          fi
+
+  build:
+    needs: verify-tag
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: linux-x86_64
+            library: lib{{ cookiecutter.gd_library_base }}.so
+          - os: windows-latest
+            artifact: windows-x86_64
+            library: {{ cookiecutter.gd_library_base }}.dll
+          - os: macos-latest
+            artifact: macos-arm64
+            library: lib{{ cookiecutter.gd_library_base }}.dylib
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build GDExtension (release)
+        run: cargo build -p {{ cookiecutter.gd_crate_name }} --release
+      - name: Upload library
+        uses: actions/upload-artifact@v4
+        with:
+          name: {% raw %}${{ matrix.artifact }}{% endraw %}
+          path: target/release/{% raw %}${{ matrix.library }}{% endraw %}
+
+  package:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Package addon and demo zips
+        run: |
+          chmod +x scripts/linux/package-godot-release.sh
+          ./scripts/linux/package-godot-release.sh \
+            "${GITHUB_REF_NAME}" \
+            "artifacts/linux-x86_64/lib{{ cookiecutter.gd_library_base }}.so" \
+            "artifacts/windows-x86_64/{{ cookiecutter.gd_library_base }}.dll" \
+            "artifacts/macos-arm64/lib{{ cookiecutter.gd_library_base }}.dylib"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/{{ cookiecutter.project_slug }}-*.zip
+            dist/{{ cookiecutter.project_slug }}-demo-*.zip
+            dist/checksums-*.txt
+          generate_release_notes: true

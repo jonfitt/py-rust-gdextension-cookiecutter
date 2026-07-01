@@ -1,0 +1,82 @@
+[project]
+name = "py-rust-gdextension-cookiecutter"
+dynamic = ["version"]
+description = "Generate Rust GDExtension projects for Godot 4"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "cookiecutter>=2.6.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+py-rust-gd = "py_rust_gdextension_cookiecutter.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "VERSION"
+pattern = "(?P<version>[^\\s]+)"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/py_rust_gdextension_cookiecutter/**",
+  "/VERSION",
+]
+
+[project.optional-dependencies]
+dev = [
+    "invoke>=2.2.0",
+    "mypy>=1.14.0",
+    "pre-commit>=4.0.0",
+    "pytest>=8.0.0",
+    "ruff>=0.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "invoke>=2.2.0",
+    "mypy>=1.14.0",
+    "pre-commit>=4.0.0",
+    "pytest>=8.0.0",
+    "ruff>=0.9.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests"]
+exclude = ["src/py_rust_gdextension_cookiecutter/template"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "src"
+namespace_packages = false
+strict = true
+warn_unused_configs = true
+exclude = ["src/py_rust_gdextension_cookiecutter/template/"]
+files = ["tasks.py", "versioning.py", "tests"]
+
+[[tool.mypy.overrides]]
+module = "cookiecutter.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "invoke.*"
+ignore_missing_imports = true
