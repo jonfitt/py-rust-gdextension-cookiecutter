@@ -1,0 +1,2 @@
+# Default reviewers for all changes. @{{ cookiecutter.github_username }} is requested automatically on every pull request.
+* @{{ cookiecutter.github_username }}

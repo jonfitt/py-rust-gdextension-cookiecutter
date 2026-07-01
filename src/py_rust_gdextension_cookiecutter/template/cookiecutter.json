@@ -13,6 +13,7 @@
   "gd_crate_name": "my_project_gd",
   "gd_library_base": "my_project_gd",
   "year": "2026",
+  "github_username": "YOUR_GITHUB_USERNAME",
   "_copy_without_render": [
     "*.png",
     "*.jpg",

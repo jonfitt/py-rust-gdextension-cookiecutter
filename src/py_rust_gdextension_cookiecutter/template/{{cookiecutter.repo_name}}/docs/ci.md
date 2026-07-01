@@ -29,6 +29,18 @@ git push origin v0.1.0
 
 Release assets appear under **GitHub Releases** for the tag.
 
+### Branch protection (optional)
+
+Once the repository exists on GitHub and `gh auth login` has been run:
+
+```bash
+./scripts/linux/setup-branch-protection.sh
+```
+
+This reads the owner from your `origin` remote URL, enables squash-only merges, requires the
+`build` CI check and a code-owner review, and restricts merging to the repository owner.
+See [`scripts/README.md`](../scripts/README.md) for details and flags.
+
 ## If using GitLab
 
 Config: [`.gitlab-ci.yml`](../.gitlab-ci.yml).
