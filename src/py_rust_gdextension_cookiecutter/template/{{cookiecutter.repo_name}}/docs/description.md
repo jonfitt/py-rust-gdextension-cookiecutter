@@ -39,8 +39,7 @@ version.workspace = true
 edition = "2024"
 description = "..."
 {% if cookiecutter.has_remote_license == "yes" %}
-license.workspace = true
-license-file = "{{ cookiecutter.license_file }}"
+license-file.workspace = true
 {% endif %}
 ```
 
