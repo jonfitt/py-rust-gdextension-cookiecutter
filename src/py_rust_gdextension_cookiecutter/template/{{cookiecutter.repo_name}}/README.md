@@ -33,7 +33,12 @@ Open `godot/project.godot` in Godot {{ cookiecutter.godot_compatibility_minimum 
 ./scripts/linux/setup-git-hooks.sh
 ```
 
-See [`docs/ci.md`](./docs/ci.md) for GitHub Actions and GitLab CI details.
+`setup-git-hooks` enables pre-commit checks and wires in your local [`.gitconfig`](.gitconfig)
+(gitignored). On first run it is created from [`.gitconfig.example`](.gitconfig.example) if you
+did not set author/email when generating the project. Edit `.gitconfig` with your commit
+identity before your first commit.
+
+See [`scripts/README.md`](./scripts/README.md) and [`docs/ci.md`](./docs/ci.md) for details.
 
 ## Releasing
 

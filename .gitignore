@@ -186,6 +186,9 @@ cython_debug/
 # PyCharm / IntelliJ
 .idea/
 
+# Local Git identity (copy from .gitconfig.example; never commit)
+.gitconfig
+
 # Abstra
 #   Abstra is an AI-powered process automation framework.
 #   Ignore directories containing user credentials, local state, and settings.

@@ -50,9 +50,23 @@ def test_render_creates_expected_files(tmp_path: Path, base_options: ProjectOpti
         "scripts/linux/sync-version.sh",
         "scripts/linux/bump-version.sh",
         "scripts/windows/version-lib.ps1",
+        ".gitconfig.example",
+        ".githooks/pre-commit",
     ]
     for relative in expected:
         assert (destination / relative).is_file(), relative
+
+    gitignore = (destination / ".gitignore").read_text(encoding="utf-8")
+    assert ".gitconfig" in gitignore
+
+    pre_commit = (destination / ".githooks/pre-commit").read_text(encoding="utf-8")
+    assert "EXPECTED_EMAIL" in pre_commit
+
+    gitconfig = destination / ".gitconfig"
+    assert gitconfig.is_file()
+    gitconfig_text = gitconfig.read_text(encoding="utf-8")
+    assert "test@example.com" in gitconfig_text
+    assert "Test Author" in gitconfig_text
 
     cargo_toml = (destination / "Cargo.toml").read_text(encoding="utf-8")
     assert "demo_lib_gd" in cargo_toml
@@ -97,3 +111,22 @@ def test_render_with_remote_license(tmp_path: Path, base_options: ProjectOptions
     gd_cargo = (destination / "extensions/demo_lib_gd/Cargo.toml").read_text(encoding="utf-8")
     assert "license-file.workspace = true" in gd_cargo
     assert "version.workspace = true" in gd_cargo
+
+
+def test_render_without_author_creates_gitconfig_from_example(
+    tmp_path: Path, base_options: ProjectOptions
+) -> None:
+    options = ProjectOptions(
+        **{
+            **base_options.__dict__,
+            "author": "",
+            "email": "",
+        }
+    )
+    destination = tmp_path / "demo_lib"
+    render_project_local(options, destination)
+
+    gitconfig = destination / ".gitconfig"
+    assert gitconfig.is_file()
+    example = destination / ".gitconfig.example"
+    assert gitconfig.read_text(encoding="utf-8") == example.read_text(encoding="utf-8")

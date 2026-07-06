@@ -64,7 +64,8 @@ def main(
     console.print(f"\n[bold green]Project created at[/bold green] {project_path}")
     console.print("\nNext steps:")
     console.print(f"  cd {project_path.name}")
-    console.print("  ./scripts/linux/setup-git-hooks.sh    # optional")
+    console.print("  ./scripts/linux/setup-git-hooks.sh    # hooks + local .gitconfig")
+    console.print("  # Edit .gitconfig if needed (gitignored; not pushed)")
     console.print(f"  cargo build -p {options.gd_crate_name}")
     console.print("  # Open godot/ in Godot 4 and run the demo scene")
     if options.include_bevy_demo:

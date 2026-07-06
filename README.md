@@ -36,7 +36,7 @@ The CLI clones your git remote (empty or containing only `README`, `LICENSE`, an
 - Godot 4 GDExtension (`cdylib`)
 - Native CLI demo (and optional Bevy visualizer)
 - Godot demo project
-- CI workflows, git hooks, and release packaging scripts
+- CI workflows, git hooks, local `.gitconfig` identity (gitignored), and release packaging scripts
 - Documentation stubs
 
 ### Flags
@@ -64,7 +64,14 @@ Any other files or directories cause the generator to fail with a clear error.
 ```bash
 pip install -e ".[dev]"
 pre-commit install
+./scripts/setup-git-identity.sh
 ```
+
+Copy [`.gitconfig.example`](.gitconfig.example) to `.gitconfig` (gitignored) and set your name
+and email. The setup script creates `.gitconfig` from the example if missing and includes it in
+your local `.git/config` so it overrides a global Git identity for this repo only.
+
+On Windows, run `.\scripts\setup-git-identity.ps1` instead.
 
 ### Invoke tasks
 
